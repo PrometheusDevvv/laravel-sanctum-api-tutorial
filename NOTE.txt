@@ -1,6 +1,0 @@
-1: Traits;
-2: $request->validated($request->all());
-3: $user->createToken()->plainTextToken();
-4: 
-
-
