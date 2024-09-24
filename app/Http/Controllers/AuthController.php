@@ -19,11 +19,15 @@ class AuthController extends Controller
         $request->validated($request->all());
 
         if(!Auth::attempt($request->only('email', 'password'))){
-            return $this->error("Credentials Don't Match", "vax chemi", 200);
+            return $this->error("", 'Credentils Don\' match', 200);
         }
+        $user = Auth::user();
+
         return response()->json([
-            'token' => "x"
+            'user' => $user,
+            'token' => $user->createToken("User_id => {$user->id}")->plainTextToken
         ]); 
+        
     }
 
     public function register(StoreUserRequest $request){
