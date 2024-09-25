@@ -8,12 +8,14 @@ use Illuminate\Http\Request;
 use App\Http\Resources\TaskResource;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTaskRequest;
+use App\Traits\HttpResponses;
 
 class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    use HttpResponses;
     public function index()
     {
         return  TaskResource::collection(
@@ -40,17 +42,25 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Task $task)
     {
-        //
+       
+        if(Auth::user()->id !== $task->user_id){
+            
+            return $this->error('', 'Not FOund', 404);
+        }
+        return new TaskResource($task);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Task $task)
     {
-        //
+
+        $task->update($request->all());
+
+        return new TaskResource($task);
     }
 
     /**
