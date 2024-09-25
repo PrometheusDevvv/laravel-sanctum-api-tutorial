@@ -44,12 +44,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-       
-        if(Auth::user()->id !== $task->user_id){
-            
-            return $this->error('', 'Not FOund', 404);
-        }
-        return new TaskResource($task);
+        return $this->isNotAuthorized($task) ?? new TaskResource($task);
     }
 
     /**
@@ -57,7 +52,8 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-
+        $this->isNotAuthorized($task) ;
+        
         $task->update($request->all());
 
         return new TaskResource($task);
@@ -66,8 +62,18 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+    public function destroy(Task $task)
+    {   
+            return $this->isNotAuthorized($task) ? $this->isNotAuthorized($task) : $task->delete();
+
+    }
+
+    
+
+    public function isNotAuthorized($object){
+        if(Auth::user()->id !== $object->user_id){
+            
+            return response()->json("You are not authoreised", 401);
+        }
     }
 }
